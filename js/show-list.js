@@ -1,10 +1,18 @@
 import { getAllLista } from "./end-points.js";
 import { getAllIdTask } from "./end-points.js";
 import { crearLista } from "./end-points.js";
+import { crearTarea } from "./end-points.js";
+import { editarTarea } from "./end-points.js";
+import { eliminarTask } from "./end-points.js";
+import { eliminarLista } from "./end-points.js";
 
 const $container = document.querySelector(".container");
 const $btnCrearList = document.querySelector("#btn_crear_lista");
 const $inputCrearList = document.querySelector("#input_lista");
+
+let idTask = "";
+let idList = "";
+let task = "";
 /**
  * Funcion para mostrar las listas
  * tambien se instancia el metodo getTask() para mostrar
@@ -14,8 +22,6 @@ export const showNombreList = async () => {
   let listName = await getAllLista();
   listName.forEach(async (item, index) => {
     let task = await getAllIdTask(item.id);
-    console.log(item.listName);
-
     const $card = document.createElement("div");
     $card.classList.add("card", "shadow", "mt-4");
     const $cardBody = document.createElement("div");
@@ -31,13 +37,14 @@ export const showNombreList = async () => {
     $colPtitle.classList.add("col-md-4");
     $rowDeleteList.appendChild($colPtitle);
     const $pTitle = document.createElement("p");
+    $pTitle.classList.add("font");
     $pTitle.classList.add("list_title");
     $pTitle.textContent = item.listName;
     const $colBtnInputDelete = document.createElement("div");
     $colBtnInputDelete.classList.add("col-md-1");
     $rowDeleteList.appendChild($colBtnInputDelete);
     const $btnDeleteList = document.createElement("button");
-    $btnDeleteList.classList.add("btn", "btn-danger");
+    $btnDeleteList.classList.add("btn", "btn-danger", `btn-delete-list`);
     $btnDeleteList.textContent = "eliminar";
     $btnDeleteList.dataset.id = item.id;
     $colPtitle.appendChild($pTitle);
@@ -67,12 +74,30 @@ export const showNombreList = async () => {
       "btn",
       "btn-secondary",
       "shadow",
-      "btn_crear_lista"
+      "btn_crear_lista",
+      `btnedit${item.id}`
     );
     $btnCtreateTask.type = "button";
     $btnCtreateTask.dataset.id = item.id;
     $btnCtreateTask.textContent = "Crear";
+
+    const $colBtnActualizar = document.createElement("div");
+    $colBtnActualizar.classList.add("col-md-5");
+    const $btnActualizarTask = document.createElement("button");
+    $row.appendChild($colBtnActualizar);
+    $btnActualizarTask.classList.add(
+      "btn",
+      "btn-secondary",
+      "shadow",
+      "btn_cambiar_task",
+      `btnUpdate${item.id}`
+    );
+    $btnActualizarTask.type = "button";
+    $btnActualizarTask.dataset.id = item.id;
+    $btnActualizarTask.textContent = "Actualizar";
+
     $colBtnCreateTask.appendChild($btnCtreateTask);
+    $colBtnActualizar.appendChild($btnActualizarTask);
     const $rowTaskShow = document.createElement("div");
     $rowTaskShow.classList.add("row");
     $cardBody.appendChild($rowTaskShow);
@@ -88,21 +113,26 @@ export const showNombreList = async () => {
       $colTaskShow.classList.add("col-md-6", "mt-5");
       $rowTaskShow.appendChild($colTaskShow);
       const $checkShowTask = document.createElement("div");
-      $checkShowTask.classList.add("input-group-text");
+      $checkShowTask.classList.add(
+        "input-group-text",
+        `checkTask${itemTask.id}`
+      );
       const $inputCheckTask = document.createElement("input");
+      $inputCheckTask.classList.add("check-input");
       $inputCheckTask.type = "checkbox";
       $inputCheckTask.value = itemTask.id;
       $inputCheckTask.readOnly;
       const $spanTetxCheck = document.createElement("span");
-      $spanTetxCheck.classList.add("ml-3");
+      $spanTetxCheck.classList.add("ml-3", "checkText");
       $spanTetxCheck.textContent = itemTask.task;
       $checkShowTask.appendChild($inputCheckTask);
       $checkShowTask.appendChild($spanTetxCheck);
       const $colBtnEditTask = document.createElement("div");
-      $colBtnCreateTask.classList.add("col-md-3");
+      //$colBtnEditTask.classList.add("col-md-3");
       const $btnEditTask = document.createElement("button");
       $btnEditTask.classList.add(
         "editar_task",
+        `editar_id${itemTask.id}`,
         "btn-lg",
         "btn-warning",
         "d-flex",
@@ -113,12 +143,15 @@ export const showNombreList = async () => {
       $btnEditTask.id = "editar_task";
       $btnEditTask.type = "button";
       $btnEditTask.textContent = "Editar";
-      $btnEditTask.dataset.id = itemTask.id;
+      $btnEditTask.dataset.idtask = itemTask.id;
+      $btnEditTask.dataset.idtalist = item.id;
+      $btnEditTask.dataset.task = itemTask.task;
       const $colBtnDeleteTask = document.createElement("div");
       $colBtnDeleteTask.classList.add("col-md-3");
       const $btnDeleteTask = document.createElement("button");
       $btnDeleteTask.classList.add(
-        "editar_task",
+        `eliminar_task${itemTask.id}`,
+        "eliminar",
         "btn-lg",
         "btn-danger",
         "d-flex",
@@ -137,8 +170,6 @@ export const showNombreList = async () => {
       $rowTaskShow.appendChild($colBtnDeleteTask);
       $colBtnEditTask.appendChild($btnEditTask);
       $colBtnDeleteTask.appendChild($btnDeleteTask);
-      console.log(itemTask.id);
-      console.log(itemTask.task);
     });
     $container.appendChild($card);
   });
@@ -160,15 +191,90 @@ export const showNombreList = async () => {
     }
   });
 
-  document.addEventListener("click", (e) => {
+  /**
+   * Metodo para crear tareas
+   */
+  document.addEventListener("click", async (e) => {
     if (e.target.matches(".btn_crear_lista")) {
       const inputCreateTask = document.querySelector(
         `.input_create_task${e.target.dataset.id}`
       );
       if (inputCreateTask.value != "") {
-        console.log(inputCreateTask.value);
+        let input = inputCreateTask.value;
+        let id = e.target.dataset.id;
+        let json = await crearTarea(input, false, id);
+        if (json != "") {
+          location.reload();
+        } else {
+          console.log("error");
+        }
       } else {
         alert("Este campo no puede estar vacio");
+      }
+    }
+
+    if (e.target.matches(".editar_task")) {
+      idTask = e.target.dataset.idtask;
+      idList = e.target.dataset.idtalist;
+      task = e.target.dataset.task;
+
+      const inputEditTask = document.querySelector(
+        `.input_create_task${idList}`
+      );
+      const inputHidden = document.querySelector(`.input_hidden_task${idList}`);
+
+      const btnCambiar = document.querySelector(`.btnedit${idList}`);
+      btnCambiar.disabled = true;
+      inputEditTask.value = task;
+    }
+
+    if (e.target.matches(".btn_cambiar_task")) {
+      const inputEditTask = document.querySelector(
+        `.input_create_task${e.target.dataset.id}`
+      );
+      let task = inputEditTask.value;
+      if (inputEditTask.value != "") {
+        let json = await editarTarea(idTask, idList, task, false);
+        if (json != null) {
+          location.reload();
+        } else {
+          console.log("error");
+        }
+      } else {
+        alert("El campo no puede estar vacio");
+      }
+    }
+
+    if (e.target.matches(".eliminar")) {
+      let id = e.target.dataset.id;
+      let json = await eliminarTask(id);
+      if (json != "") {
+        location.reload();
+      } else {
+        console.log("error");
+      }
+    }
+
+    if (e.target.matches(".btn-delete-list")) {
+      let id = e.target.dataset.id;
+      let json = await eliminarLista(id);
+      if (json != "") {
+        location.reload();
+      } else {
+        console.log("error");
+      }
+    }
+
+    if (e.target.matches(".check-input")) {
+      e.target.className = "tachado";
+      const span = document.querySelector(".checkText");
+      console.log(e);
+      if (e.target.checked) {
+        console.log(true);
+        span.classList.add("tachado");
+      } else {
+        console.log(false);
+        span.className = "";
       }
     }
   });

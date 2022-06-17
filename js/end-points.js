@@ -55,7 +55,10 @@ export const crearLista = async (listName) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText };
     return json;
     //location.reload();
-  } catch (error) {}
+  } catch (err) {
+    let message = err.statusText || "Ocurrió un error";
+    console.log(message);
+  }
 };
 
 export const crearTarea = async (task, complete, id) => {
@@ -79,5 +82,72 @@ export const crearTarea = async (task, complete, id) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText };
     return json;
     //location.reload();
-  } catch (error) {}
+  } catch (err) {
+    let message = err.statusText || "Ocurrió un error";
+    console.log(message);
+  }
+};
+
+export const editarTarea = async (idTask, idList, task, complete) => {
+  try {
+    let options = {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+          id: idTask,
+          task: task,
+          complete: complete,
+          lista: {
+            id: idList,
+          },
+        }),
+      },
+      res = await fetch(url + "ToDo/save", options),
+      json = await res.json();
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    return json;
+  } catch (err) {
+    let message = err.statusText || "Ocurrió un error";
+    console.log(message);
+  }
+};
+
+export const eliminarTask = async (id) => {
+  try {
+    let options = {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json; charset=utf-8",
+        },
+      },
+      res = await fetch(url + "ToDo/" + id, options),
+      json = await res.json();
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    return json;
+  } catch (err) {
+    let message = err.statusText || "Ocurrió un error";
+    console.log(message);
+  }
+};
+
+export const eliminarLista = async (id) => {
+  try {
+    let options = {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json; charset=utf-8",
+        },
+      },
+      res = await fetch(url + "list/" + id, options),
+      json = await res.json();
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    return json;
+  } catch (err) {
+    let message = err.statusText || "Ocurrió un error";
+    console.log(message);
+  }
 };

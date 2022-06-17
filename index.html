@@ -10,6 +10,12 @@
       integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Charis+SIL&display=swap"
+      rel="stylesheet"
+    />
     <script type="module" src="./js/view.js" async defer></script>
     <title>ToDo List</title>
     <style>
@@ -17,6 +23,19 @@
         background-image: url(https://i.pinimg.com/736x/9a/70/55/9a7055e2abcc20a6e34cdeda41fc81f1.jpg);
         background-size: cover;
         background-repeat: no-repeat;
+      }
+      .tachado {
+        text-decoration: line-through;
+      }
+      .ocultar {
+        display: none;
+      }
+      .mostrar {
+        display: block;
+      }
+      .font {
+        font-family: "Charis SIL", serif;
+        font-size: 25px;
       }
     </style>
   </head>
@@ -50,53 +69,6 @@
           </div>
         </div>
       </div>
-      <template id="crud-template">
-        <div class="card shadow mt-4">
-          <div class="card-body">
-            <div class="card-title">
-              <p class="list_title"></p>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-4">
-                    <input
-                      type="text"
-                      class="form-control"
-                      name="create_task"
-                      id="create_task"
-                      value=""
-                      placeholder="¿Qué piensas hacer?"
-                      required
-                    />
-                  </div>
-                  <div class="col-md-8 mb-4">
-                    <button class="crear_task btn btn-primary" id="crear_task">
-                      Crear
-                    </button>
-                  </div>
-                  <input type="hidden" name="id_task" id="id_task" value="" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-      <template id="task_template">
-        <div class="col-md-8">
-          <div class="alert alert-secondary" role="alert">
-            A simple secondary alert—check it out!
-          </div>
-        </div>
-        <div class="col-md-2">
-          <button class="editar_task btn btn-secondary" id="editar_task">
-            Editar
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button class="eliminar_task btn btn-secondary" id="eliminar_task">
-            Eliminar
-          </button>
-        </div>
-      </template>
     </div>
   </body>
 </html>
