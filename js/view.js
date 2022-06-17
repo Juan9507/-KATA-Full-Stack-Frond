@@ -1,1 +1,3 @@
-console.log("hola");
+import { showNombreList } from "./show-list.js";
+
+showNombreList();
