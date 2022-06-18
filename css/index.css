@@ -1,5 +1,5 @@
 body {
-  background-image: url(https://i.pinimg.com/736x/9a/70/55/9a7055e2abcc20a6e34cdeda41fc81f1.jpg);
+  background-image: url(https://www.xtrafondos.com/wallpapers/resoluciones/20/diseno-de-paisaje-del-espacio_2560x1440_5771.jpg);
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -15,4 +15,7 @@ body {
 .font {
   font-family: "Charis SIL", serif;
   font-size: 25px;
+}
+h1 {
+  color: white;
 }

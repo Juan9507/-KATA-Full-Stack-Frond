@@ -9,7 +9,6 @@ import { eliminarLista } from "./end-points.js";
 const $container = document.querySelector(".container");
 const $btnCrearList = document.querySelector("#btn_crear_lista");
 const $inputCrearList = document.querySelector("#input_lista");
-
 let idTask = "";
 let idList = "";
 let task = "";
@@ -122,8 +121,9 @@ export const showNombreList = async () => {
       $inputCheckTask.type = "checkbox";
       $inputCheckTask.value = itemTask.id;
       $inputCheckTask.readOnly;
+      $inputCheckTask.dataset.id = itemTask.id;
       const $spanTetxCheck = document.createElement("span");
-      $spanTetxCheck.classList.add("ml-3", "checkText");
+      $spanTetxCheck.classList.add("ml-3", `checkText${itemTask.id}`);
       $spanTetxCheck.textContent = itemTask.task;
       $checkShowTask.appendChild($inputCheckTask);
       $checkShowTask.appendChild($spanTetxCheck);
@@ -192,13 +192,15 @@ export const showNombreList = async () => {
   });
 
   /**
-   * Metodo para crear tareas
+   * Evento para estar en la escucha al click
    */
   document.addEventListener("click", async (e) => {
+    //Crear una lista
     if (e.target.matches(".btn_crear_lista")) {
       const inputCreateTask = document.querySelector(
         `.input_create_task${e.target.dataset.id}`
       );
+
       if (inputCreateTask.value != "") {
         let input = inputCreateTask.value;
         let id = e.target.dataset.id;
@@ -213,6 +215,7 @@ export const showNombreList = async () => {
       }
     }
 
+    //Editar una tarea - obtener los valores de la tarea
     if (e.target.matches(".editar_task")) {
       idTask = e.target.dataset.idtask;
       idList = e.target.dataset.idtalist;
@@ -228,6 +231,7 @@ export const showNombreList = async () => {
       inputEditTask.value = task;
     }
 
+    //editar una tarea - cuando da click en el boton actualizar
     if (e.target.matches(".btn_cambiar_task")) {
       const inputEditTask = document.querySelector(
         `.input_create_task${e.target.dataset.id}`
@@ -245,6 +249,7 @@ export const showNombreList = async () => {
       }
     }
 
+    //Eliminar una tarea
     if (e.target.matches(".eliminar")) {
       let id = e.target.dataset.id;
       let json = await eliminarTask(id);
@@ -255,6 +260,7 @@ export const showNombreList = async () => {
       }
     }
 
+    //Elimar la lista
     if (e.target.matches(".btn-delete-list")) {
       let id = e.target.dataset.id;
       let json = await eliminarLista(id);
@@ -265,16 +271,18 @@ export const showNombreList = async () => {
       }
     }
 
+    //Tachar al realizar una tarea
     if (e.target.matches(".check-input")) {
-      e.target.className = "tachado";
-      const span = document.querySelector(".checkText");
-      console.log(e);
+      const btnEditar = document.querySelector(
+        `.editar_id${e.target.dataset.id}`
+      );
+      const span = document.querySelector(`.checkText${e.target.dataset.id}`);
       if (e.target.checked) {
-        console.log(true);
         span.classList.add("tachado");
+        btnEditar.disabled = true;
       } else {
-        console.log(false);
-        span.className = "";
+        span.classList.remove("tachado");
+        btnEditar.disabled = false;
       }
     }
   });
